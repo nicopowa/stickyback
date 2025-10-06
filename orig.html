@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+		/>
+		<title>Transparent Sticky Background</title>
+		<style>
+			:root {
+				--item-shadow: 1px 1px 5px rgba(0, 0, 0, 0.05);
+				--text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.35);
+				--fade-header: linear-gradient(
+					to bottom,
+					black 80%,
+					transparent 100%
+				);
+			}
+
+			@property --offset {
+				syntax: "<percentage>";
+				initial-value: 0%;
+				inherits: false;
+			}
+
+			@keyframes grad {
+				to {
+					--offset: 100%;
+				}
+			}
+
+			html,
+			body {
+				width: 100%;
+				height: 100vh;
+				margin: 0;
+				padding: 0;
+				touch-action: pan-y;
+			}
+
+			body {
+				color: #fff;
+				background: #000;
+				font: 500 16px/1.55 ui-sans-serif, system-ui, -apple-system,
+					Segoe UI, Roboto, "Helvetica Neue", Arial;
+			}
+
+			body::before,
+			section header::before {
+				content: "";
+				z-index: -1;
+				position: fixed;
+				inset: 0;
+				background-position: center;
+				background-size: cover;
+				background-image: linear-gradient(
+					-45deg,
+					#ee7752 calc(-100% + var(--offset)),
+					#e73c7e calc(-75% + var(--offset)),
+					#23a6d5 calc(-50% + var(--offset)),
+					#23d5ab calc(-25% + var(--offset)),
+					#ee7752 calc(0% + var(--offset)),
+					#e73c7e calc(25% + var(--offset)),
+					#23a6d5 calc(50% + var(--offset)),
+					#23d5ab calc(75% + var(--offset)),
+					#ee7752 calc(100% + var(--offset))
+				);
+
+				animation: grad 10s linear infinite;
+			}
+
+			section header::before {
+				position: absolute;
+				background-attachment: fixed;
+			}
+
+			body:has(#back:checked)::before,
+			body:has(#back:checked) section header::before {
+				background-image: url("https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=1920");
+				animation: none;
+			}
+
+			body:has(#back:checked) li {
+				background: rgba(255, 255, 255, 0.2);
+			}
+
+			body:has(#back:checked) footer {
+				display: block;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			main {
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 16px 12px;
+			}
+
+			h1 {
+				float: left;
+				margin: 0;
+				font-size: 64px;
+				line-height: 64px;
+				text-shadow: var(--text-shadow);
+			}
+
+			h2 {
+				position: sticky;
+				top: 0;
+				z-index: 11;
+				height: 60px;
+				padding: 0 8px;
+				line-height: 50px;
+				font-weight: normal;
+				text-align: right;
+			}
+
+			#back {
+				display: none;
+			}
+
+			#back + label::after {
+				cursor: pointer;
+				content: "image";
+				text-transform: uppercase;
+				font-weight: 700;
+				font-size: 20px;
+				letter-spacing: 0.08em;
+				text-shadow: var(--text-shadow);
+			}
+
+			#back:checked + label::after {
+				content: "gradient";
+			}
+
+			section {
+				margin: 28px 0 40px;
+			}
+
+			section header {
+				position: sticky;
+				top: 0;
+				z-index: 10;
+				height: 60px;
+				padding: 0 8px;
+				line-height: 50px;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				font-weight: 700;
+				font-size: 20px;
+				text-shadow: var(--text-shadow);
+				-webkit-mask-image: var(--fade-header);
+				mask-image: var(--fade-header);
+			}
+
+			ul {
+				list-style: none;
+				padding: 8px;
+				margin: 0;
+			}
+
+			li {
+				background: rgba(255, 255, 255, 0.12);
+				border: 1px solid rgba(255, 255, 255, 0.12);
+				border-radius: 6px;
+				padding: 16px 18px;
+				margin: 12px 0;
+				box-shadow: var(--item-shadow);
+				text-shadow: var(--text-shadow);
+			}
+
+			footer {
+				display: none;
+				padding: 0 16px;
+			}
+
+			footer a {
+				color: inherit;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<h1>Title</h1>
+			<h2>
+				<input id="back" type="checkbox" />
+				<label for="back"></label>
+			</h2>
+			<section>
+				<header>Section A</header>
+				<ul>
+					<li>Item A1</li>
+					<li>Item A2</li>
+					<li>Item A3</li>
+					<li>Item A4</li>
+					<li>Item A5</li>
+					<li>Item A6</li>
+					<li>Item A7</li>
+					<li>Item A8</li>
+					<li>Item A9</li>
+				</ul>
+			</section>
+			<section>
+				<header>Section B</header>
+				<ul>
+					<li>Item B1</li>
+					<li>Item B2</li>
+					<li>Item B3</li>
+					<li>Item B4</li>
+					<li>Item B5</li>
+					<li>Item B6</li>
+					<li>Item B7</li>
+					<li>Item B8</li>
+					<li>Item B9</li>
+				</ul>
+			</section>
+			<section>
+				<header>Section C</header>
+				<ul>
+					<li>Item C1</li>
+					<li>Item C2</li>
+					<li>Item C3</li>
+					<li>Item C4</li>
+					<li>Item C5</li>
+					<li>Item C6</li>
+					<li>Item C7</li>
+					<li>Item C8</li>
+					<li>Item C9</li>
+				</ul>
+			</section>
+			<footer>
+				Picture:
+				<a
+					href="https://unsplash.com/photos/landscape-photography-of-mountains-twukN12EN7c"
+					target="_blank"
+					>Simon Berger</a
+				>
+			</footer>
+		</main>
+	</body>
+</html>
