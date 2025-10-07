@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+		/>
+		<title>Transparent Sticky Stack</title>
+		<style>
+			:root {
+				--text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.45);
+				--h1-height: 48px;
+				--h2-height: 40px;
+				--h3-height: 32px;
+				--fade-mask: linear-gradient(
+					to bottom,
+					black 80%,
+					transparent 100%
+				);
+				--vw: 100vw;
+				--vh: 100vh;
+			}
+
+			@property --offset {
+				syntax: "<percentage>";
+				initial-value: 0%;
+				inherits: false;
+			}
+
+			@keyframes grad {
+				to {
+					--offset: 100%;
+				}
+			}
+
+			html {
+				background: #000;
+			}
+
+			body {
+				width: 100%;
+				margin: 0;
+				padding: 0;
+				touch-action: pan-y;
+				background: transparent;
+				color: #fff;
+				font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI,
+					Roboto, "Helvetica Neue", Arial;
+			}
+
+			body::before,
+			main section > h1::before,
+			main section > h2::before,
+			main section > h3::before {
+				content: "";
+				z-index: -1;
+				position: fixed;
+				inset: 0;
+				background-position: center;
+				background-size: cover;
+				background-image: linear-gradient(
+					-45deg,
+					#ee7752 calc(-100% + var(--offset)),
+					#e73c7e calc(-75% + var(--offset)),
+					#23a6d5 calc(-50% + var(--offset)),
+					#23d5ab calc(-25% + var(--offset)),
+					#ee7752 calc(0% + var(--offset)),
+					#e73c7e calc(25% + var(--offset)),
+					#23a6d5 calc(50% + var(--offset)),
+					#23d5ab calc(75% + var(--offset)),
+					#ee7752 calc(100% + var(--offset))
+				);
+				animation: grad 10s linear infinite;
+			}
+
+			main section > h1::before,
+			main section > h2::before,
+			main section > h3::before {
+				clip-path: inset(
+					var(--clip-top, 0px) var(--clip-right, 0px)
+						var(--clip-bottom, 0px) var(--clip-left, 0px)
+				);
+				-webkit-clip-path: inset(
+					var(--clip-top, 0px) var(--clip-right, 0px)
+						var(--clip-bottom, 0px) var(--clip-left, 0px)
+				);
+				will-change: clip-path;
+			}
+
+			body:has(#back:checked)::before,
+			body:has(#back:checked) main section > h1::before,
+			body:has(#back:checked) main section > h2::before,
+			body:has(#back:checked) main section > h3::before {
+				background-image: url("https://images.unsplash.com/photo-1500964757637-c85e8a162699?q=80&w=1920");
+				animation: none;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			main {
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 16px 12px;
+				/* padding-bottom: 100vh; */
+				/* this is the end */
+				padding-bottom: calc(100vh - var(--h1-height));
+			}
+
+			header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding-bottom: 20px;
+			}
+
+			header h1 {
+				margin: 0;
+				font-size: 48px;
+				line-height: 1;
+				text-shadow: var(--text-shadow);
+			}
+
+			#back {
+				display: none;
+			}
+
+			#back + label {
+				cursor: pointer;
+				font-weight: 700;
+				font-size: 16px;
+				letter-spacing: 0.08em;
+				text-shadow: var(--text-shadow);
+				text-transform: uppercase;
+				padding: 8px 12px;
+			}
+
+			#back + label::after {
+				content: "Image";
+			}
+
+			#back:checked + label::after {
+				content: "Gradient";
+			}
+
+			main section > h1,
+			main section > h2,
+			main section > h3 {
+				position: sticky;
+				margin: 0;
+				padding: 0 0px;
+				display: flex;
+				align-items: center;
+				white-space: pre;
+				text-overflow: ellipsis;
+				text-shadow: var(--text-shadow);
+				-webkit-mask-image: var(--fade-mask);
+				mask-image: var(--fade-mask);
+				padding-bottom: 1rem;
+				isolation: isolate;
+			}
+
+			main section > h1 {
+				height: var(--h1-height);
+				font-size: 1.8em;
+				top: 0px;
+				z-index: 10;
+			}
+
+			main section > h2 {
+				height: var(--h2-height);
+				font-size: 1.4em;
+				top: var(--h1-height);
+				z-index: 9;
+			}
+
+			main section > h3 {
+				height: var(--h3-height);
+				font-size: 1.1em;
+				top: calc(var(--h1-height) + var(--h2-height));
+				z-index: 8;
+			}
+
+			p {
+				margin: 0;
+				padding: 1.5em 0.3em 2.5em 0.3em;
+				line-height: 1.6;
+			}
+
+			main > section > section:last-child h1 {
+				padding-bottom: 0;
+				mask-image: linear-gradient(
+					to top,
+					black 85%,
+					transparent 100%
+				);
+			}
+		</style>
+	</head>
+
+	<body>
+		<main>
+			<header>
+				<h1>Sticky Stack</h1>
+				<div>
+					<input id="back" type="checkbox" />
+					<label for="back"></label>
+				</div>
+			</header>
+
+			<section>
+				<h1>Transparent Headers</h1>
+				<p>Content</p>
+				<section>
+					<h2>1 One</h2>
+					<p>Content</p>
+					<section>
+						<h3>1.1 One One</h3>
+						<section>
+							<p>Content</p>
+						</section>
+					</section>
+					<section>
+						<h3>1.2 One Two</h3>
+						<section>
+							<p>Content</p>
+						</section>
+					</section>
+					<section>
+						<h3>1.3 One Three</h3>
+						<section>
+							<p>Content</p>
+						</section>
+					</section>
+				</section>
+				<section>
+					<h2>2 Two</h2>
+					<p>Content</p>
+					<section>
+						<h3>2.1 Two One</h3>
+						<section>
+							<p>Content</p>
+						</section>
+					</section>
+					<section>
+						<h3>2.2 Two Two</h3>
+						<section>
+							<p>Content</p>
+						</section>
+					</section>
+				</section>
+				<section>
+					<h2>3 Three</h2>
+					<p>Content</p>
+					<section>
+						<h3>3.1 Three One</h3>
+						<section>
+							<p>Content</p>
+						</section>
+					</section>
+					<section>
+						<h3>3.2 Three Two</h3>
+						<section>
+							<p>Content</p>
+						</section>
+					</section>
+					<section>
+						<h3>3.3 Three Three</h3>
+						<section>
+							<p>Content</p>
+						</section>
+					</section>
+				</section>
+				<section>
+					<h1>The End</h1>
+				</section>
+			</section>
+		</main>
+		<script>
+			(() => {
+				document.querySelectorAll("p").forEach((p) => {
+					p.textContent =
+						"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
+				});
+			})();
+
+			(() => {
+				const root = document.documentElement;
+				const headers = Array.from(
+					document.querySelectorAll(
+						"main section > h1, main section > h2, main section > h3"
+					)
+				);
+				const vv = window.visualViewport;
+
+				const setViewport = () => {
+					const w = vv ? vv.width : window.innerWidth;
+					const h = vv ? vv.height : window.innerHeight;
+					root.style.setProperty("--vw", w + "px");
+					root.style.setProperty("--vh", h + "px");
+				};
+
+				const updateLayout = () => {
+					const stuckHeaders = headers.filter((header) => {
+						const r = header.getBoundingClientRect();
+						const computedTop = parseFloat(
+							window.getComputedStyle(header).top
+						);
+						return Math.abs(r.top - computedTop) < 1.5;
+					});
+
+					const lastStuckHeader =
+						stuckHeaders.length > 0
+							? stuckHeaders[stuckHeaders.length - 1]
+							: null;
+					const stackTop =
+						stuckHeaders.length > 0
+							? stuckHeaders[0].getBoundingClientRect().top
+							: 0;
+
+					const vh = vv ? vv.height : root.clientHeight;
+					const offY = vv ? vv.offsetTop : 0;
+
+					headers.forEach((header) => {
+						const r = header.getBoundingClientRect();
+						const isStuck = stuckHeaders.includes(header);
+
+						if (isStuck && header !== lastStuckHeader) {
+							header.style.maskImage = "none";
+							header.style.webkitMaskImage = "none";
+						} else {
+							header.style.maskImage = "";
+							header.style.webkitMaskImage = "";
+						}
+
+						let clipTop;
+						const clipBottom = r.bottom;
+
+						if (isStuck) {
+							
+							clipTop = stackTop;
+						} else {
+							clipTop = r.top;
+						}
+
+						const topInset = Math.max(0, clipTop + offY);
+						const bottomInset = Math.max(
+							0,
+							vh - (clipBottom + offY)
+						);
+						const vw = vv ? vv.width : root.clientWidth;
+						const leftInset = Math.max(0, r.left);
+						const rightInset = Math.max(0, vw - r.right);
+
+						header.style.setProperty(`--clip-top`, `${topInset}px`);
+						header.style.setProperty(
+							`--clip-bottom`,
+							`${bottomInset}px`
+						);
+						header.style.setProperty(
+							`--clip-left`,
+							`${leftInset}px`
+						);
+						header.style.setProperty(
+							`--clip-right`,
+							`${rightInset}px`
+						);
+					});
+				};
+
+				let ticking = false;
+				const onScroll = () => {
+					if (ticking) return;
+					ticking = true;
+					requestAnimationFrame(() => {
+						updateLayout();
+						ticking = false;
+					});
+				};
+
+				const onViewportChange = () => {
+					setViewport();
+					updateLayout();
+				};
+
+				onViewportChange();
+
+				window.addEventListener("scroll", onScroll, { passive: true });
+				window.addEventListener("resize", onViewportChange);
+				if (vv) {
+					vv.addEventListener("scroll", onViewportChange);
+					vv.addEventListener("resize", onViewportChange);
+				}
+			})();
+		</script>
+	</body>
+</html>
